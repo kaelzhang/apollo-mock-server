@@ -40,5 +40,10 @@
     "eslint-config-ostai": "^3.0.0",
     "eslint-plugin-import": "^2.16.0",
     "eslint": "^5.16.0"
+  },
+  "dependencies": {
+    "koa": "^2.7.0",
+    "koa-router": "^7.4.0",
+    "uuid": "^3.3.2"
   }
 }
