@@ -1,0 +1,44 @@
+{
+  "name": "apollo-mock-server",
+  "version": "1.0.0",
+  "description": "A mock server of Ctrip's apollo configuration service",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "NODE_DEBUG=apollo-mock-server nyc ava --timeout=10s --verbose",
+    "test:only": " nyc ava --timeout=10s --verbose",
+    "lint": "eslint .",
+    "posttest": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
+  },
+  "files": [
+    "src/"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/kaelzhang/apollo-mock-server.git"
+  },
+  "keywords": [
+    "apollo-mock-server"
+  ],
+  "engines": {
+    "node": ">= 6"
+  },
+  "ava": {
+    "babel": false,
+    "files": [
+      "test/*.test.js"
+    ]
+  },
+  "author": "kaelzhang",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kaelzhang/apollo-mock-server/issues"
+  },
+  "devDependencies": {
+    "ava": "^1.4.1",
+    "codecov": "^3.3.0",
+    "nyc": "^13.3.0",
+    "eslint-config-ostai": "^3.0.0",
+    "eslint-plugin-import": "^2.16.0",
+    "eslint": "^5.16.0"
+  }
+}
