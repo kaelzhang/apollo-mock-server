@@ -26,7 +26,14 @@ $ npm i apollo-mock-server
 ## Usage
 
 ```js
-import apollo_mock_server from 'apollo-mock-server'
+const {ConfigService} = require('apollo-mock-server')
+
+require('http').createServer(
+  new ConfigService({
+    pollingTimeout: 3000
+  }).callback()
+)
+.listen(8888)
 ```
 
 ## License

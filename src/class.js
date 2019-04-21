@@ -91,12 +91,20 @@ class Cluster extends Base {
       this._notificationIds[namespace] = 0
       child.on('notification', id => {
         this._notificationIds[namespace] = id
-        this.emit('notification', this._getNotificationIds())
+        this.emit('notification', this.notifications)
       })
     })
   }
 
-  _getNotificationIds () {
+  match (notifications) {
+    return notifications.every(({
+      namespaceName,
+      notificationId
+    // TODO: about application.json
+    }) => this._notificationIds[namespaceName] === notificationId)
+  }
+
+  get notifications () {
     return Object.keys(this._notificationIds).map(namespaceName => ({
       namespaceName,
       notificationId: this._notificationIds[namespaceName]
