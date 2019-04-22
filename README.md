@@ -15,7 +15,9 @@
 
 # apollo-mock-server
 
-A mock server of Ctrip's apollo configuration service
+A mock server of Ctrip's apollo configuration service.
+
+This is a mock server only for testing, so it barely has any argument type checking and fault tolerance.
 
 ## Install
 
@@ -35,6 +37,34 @@ require('http').createServer(
 )
 .listen(8888)
 ```
+
+## new ConfigService(options)
+
+- **options** `Object`
+  - **pollingTimeout** `number=60000` If there is no update notifications in `options.pollingTimeout` milliseconds, then config service will tell the client with status `304`
+
+### config.callback(): Function
+
+Return a callback function suitable for the http.createServer() method to handle a request.
+
+### config.listen(port?): Promise&lt;port&gt;
+
+- **port?** `number` port to listen
+
+Listen to a port. If `port` is not specified, it will get an available port by using [`get-port`](https://npmjs.org/package/get-port)
+
+Returns a promise of the `port` used
+
+```js
+config.listen()
+.then(port => {
+  console.log(`server started at http://127.0.0.1:${port}`)
+})
+```
+
+## new AdminClient()
+
+
 
 ## License
 

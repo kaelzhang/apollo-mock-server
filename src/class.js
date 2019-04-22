@@ -1,6 +1,13 @@
 // const Koa = require('koa')
 const EventEmitter = require('events')
+
+const Koa = require('koa')
+const Router = require('koa-router')
+const getPort = require('get-port')
+
 const uuid = require('uuid/v4')
+
+const NOOP = () => {}
 
 class Base extends EventEmitter {
   constructor (options, Child, key) {
@@ -12,7 +19,7 @@ class Base extends EventEmitter {
     this._key = key
   }
 
-  _child (name, init) {
+  _child (name, init = NOOP) {
     if (name in this._children) {
       return this._children[name]
     }
@@ -80,10 +87,12 @@ class Namespace extends Base {
   }
 }
 
+const REGEX_REPLACE_JSON = /\.json$/i
+
 class Cluster extends Base {
   constructor (options) {
     super(options, Namespace, 'namespace')
-    this._notificationIds = Object.keys(null)
+    this._notificationIds = Object.create(null)
   }
 
   namespace (namespace) {
@@ -101,7 +110,10 @@ class Cluster extends Base {
       namespaceName,
       notificationId
     // TODO: about application.json
-    }) => this._notificationIds[namespaceName] === notificationId)
+    }) => {
+      const namespace = namespaceName.replace(REGEX_REPLACE_JSON, '')
+      return this._notificationIds[namespace] === notificationId
+    })
   }
 
   get notifications () {
@@ -122,7 +134,7 @@ class App extends Base {
   }
 }
 
-class Config extends App {
+class Config extends Base {
   constructor () {
     super({}, App, 'appId')
   }
@@ -132,7 +144,43 @@ class Config extends App {
   }
 }
 
+const config = new Config()
+
+class BaseService {
+  constructor (options) {
+    this._options = options
+    this._config = config
+
+    const app = this._app = new Koa()
+    const router = this._router = new Router()
+
+    this._route(router)
+
+    app.use(router.routes())
+    app.use(router.allowedMethods())
+  }
+
+  _route () {
+    throw new Error('_route should be implemented')
+  }
+
+  async listen (port) {
+    port = port || await getPort()
+
+    return new Promise(resolve => {
+      this._app.listen(port, () => {
+        resolve(port)
+      })
+    })
+  }
+
+  callback () {
+    return this._app.callback()
+  }
+}
+
 module.exports = {
-  config: new Config(),
-  Config
+  config,
+  Config,
+  BaseService
 }

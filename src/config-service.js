@@ -1,22 +1,16 @@
-const Koa = require('koa')
-const Router = require('koa-router')
 const {parse} = require('url')
+const {BaseService} = require('./class')
 
-const {config} = require('./class')
-
-module.exports = class ConfigService {
+module.exports = class ConfigService extends BaseService {
   constructor ({
     pollingTimeout = 60000
   }) {
-    this._options = {
+    super({
       pollingTimeout
-    }
+    })
+  }
 
-    this._config = config
-
-    const app = this._app = new Koa()
-    const router = this._router = new Router()
-
+  _route (router) {
     router.get('/configs/:appId/:cluster/:namespaceName', ctx => {
       const {
         appId,
@@ -117,12 +111,5 @@ module.exports = class ConfigService {
         c.on('notification', onNotification)
       })
     })
-
-    app.use(router.routes())
-    app.use(router.allowedMethods())
-  }
-
-  callback () {
-    return this._app.callback()
   }
 }
