@@ -144,7 +144,7 @@ module.exports = class ConfigService extends BaseService {
         }
 
         const timer = setTimeout(() => {
-          c.off('notification', onNotification)
+          c.removeAllListeners('notification')
           ctx.status = 304
           resolve()
         }, this._options.pollingTimeout)
