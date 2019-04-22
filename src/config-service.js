@@ -10,8 +10,10 @@ module.exports = class ConfigService extends BaseService {
     })
 
     this._fetchDisabled = false
-    this._notificationDisabled = false
     this._fetchError = false
+
+    this._notificationDisabled = false
+    this._notificationError = false
   }
 
   enableFetchError (enable) {
@@ -20,6 +22,10 @@ module.exports = class ConfigService extends BaseService {
 
   enableFetch (enable) {
     this._fetchDisabled = !enable
+  }
+
+  enableNotificationError (enable) {
+    this._notificationError = enable
   }
 
   enableUpdateNotification (enable) {
@@ -110,6 +116,11 @@ module.exports = class ConfigService extends BaseService {
     })
 
     router.get('/notifications/v2', async ctx => {
+      if (this._notificationError) {
+        ctx.body = '{boooooooooooooom!}'
+        return
+      }
+
       if (this._notificationDisabled) {
         ctx.status = 404
         return
