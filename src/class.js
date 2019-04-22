@@ -1,5 +1,6 @@
 // const Koa = require('koa')
 const EventEmitter = require('events')
+const http = require('http')
 
 const Koa = require('koa')
 const Router = require('koa-router')
@@ -65,7 +66,7 @@ class Namespace extends Base {
   }
 
   match (key) {
-    return this._releaseKey = key
+    return this._releaseKey === key
   }
 
   get releaseKey () {
@@ -150,6 +151,7 @@ class BaseService {
   constructor (options) {
     this._options = options
     this._config = config
+    this._server = null
 
     const app = this._app = new Koa()
     const router = this._router = new Router()
@@ -167,8 +169,10 @@ class BaseService {
   async listen (port) {
     port = port || await getPort()
 
+    const server = this._server = http.createServer(this.callback())
+
     return new Promise(resolve => {
-      this._app.listen(port, () => {
+      server.listen(port, () => {
         resolve(port)
       })
     })
@@ -176,6 +180,10 @@ class BaseService {
 
   callback () {
     return this._app.callback()
+  }
+
+  close () {
+    this._server.close()
   }
 }
 

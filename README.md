@@ -62,9 +62,24 @@ config.listen()
 })
 ```
 
-## new AdminClient()
+## superAdmin
 
+The admin client for super user
 
+```js
+const {superAdmin} = require('apollo-mock-server)
+
+superAdmin
+.app('my-application')
+.cluster('default')
+.namespace('application')
+
+// Changes the config value
+.set('portal.elastic.cluster.name', 'hermes-es-jp')
+
+// Emit update notifications
+.publish()
+```
 
 ## License
 
