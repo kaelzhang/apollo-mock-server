@@ -11,6 +11,11 @@ module.exports = class ConfigService extends BaseService {
 
     this._fetchDisabled = false
     this._notificationDisabled = false
+    this._fetchError = false
+  }
+
+  enableFetchError (enable) {
+    this._fetchError = enable
   }
 
   enableFetch (enable) {
@@ -23,6 +28,11 @@ module.exports = class ConfigService extends BaseService {
 
   _route (router) {
     router.get('/configs/:appId/:cluster/:namespaceName', ctx => {
+      if (this._fetchError) {
+        ctx.body = '{boooooooooooooom!}'
+        return
+      }
+
       if (this._fetchDisabled) {
         ctx.status = 404
         return
@@ -70,6 +80,11 @@ module.exports = class ConfigService extends BaseService {
     })
 
     router.get('/configfiles/json/:appId/:cluster/:namespaceName', ctx => {
+      if (this._fetchError) {
+        ctx.body = '{boooooooooooooom!}'
+        return
+      }
+
       if (this._fetchDisabled) {
         ctx.status = 404
         return
