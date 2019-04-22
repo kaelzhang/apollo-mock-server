@@ -62,6 +62,23 @@ config.listen()
 })
 ```
 
+### config.enableFetch(enable)
+
+Enable or disable the API of get configurations, including both:
+
+- `/configs`
+- `/configfiles`
+
+If disabled, the two APIs will both response with status 404
+
+### config.enableFetchError(enable)
+
+If enabled, the two APIs above will response a bad JSON string
+
+### config.enableUpdateNotification(enable)
+
+If disabled, the API `/notifications/v2` will response with status 404
+
 ## superAdmin
 
 The admin client for super user
