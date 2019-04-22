@@ -8,10 +8,26 @@ module.exports = class ConfigService extends BaseService {
     super({
       pollingTimeout
     })
+
+    this._fetchDisabled = false
+    this._notificationDisabled = false
+  }
+
+  enableFetch (enable) {
+    this._fetchDisabled = !enable
+  }
+
+  enableUpdateNotification (enable) {
+    this._notificationDisabled = !enable
   }
 
   _route (router) {
     router.get('/configs/:appId/:cluster/:namespaceName', ctx => {
+      if (this._fetchDisabled) {
+        ctx.status = 404
+        return
+      }
+
       const {
         appId,
         cluster,
@@ -54,6 +70,11 @@ module.exports = class ConfigService extends BaseService {
     })
 
     router.get('/configfiles/json/:appId/:cluster/:namespaceName', ctx => {
+      if (this._fetchDisabled) {
+        ctx.status = 404
+        return
+      }
+
       const {
         appId,
         cluster,
@@ -74,6 +95,11 @@ module.exports = class ConfigService extends BaseService {
     })
 
     router.get('/notifications/v2', async ctx => {
+      if (this._notificationDisabled) {
+        ctx.status = 404
+        return
+      }
+
       const {
         query: {
           appId,

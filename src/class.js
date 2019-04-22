@@ -55,6 +55,11 @@ class Namespace extends Base {
     return this
   }
 
+  delete (key) {
+    delete this._configs[key]
+    return this
+  }
+
   publish () {
     this.setNotificationId(++ this._notificationId)
     this._releaseKey = uuid()
