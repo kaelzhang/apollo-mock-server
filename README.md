@@ -84,7 +84,7 @@ If disabled, the API `/notifications/v2` will response with status 404
 The admin client for super user
 
 ```js
-const {superAdmin} = require('apollo-mock-server)
+const {superAdmin} = require('apollo-mock-server')
 
 superAdmin
 .app('my-application')
