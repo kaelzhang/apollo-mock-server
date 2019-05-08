@@ -1,14 +1,17 @@
 const {parse} = require('url')
+const delay = require('delay')
 const {BaseService} = require('./class')
 
 module.exports = class ConfigService extends BaseService {
   constructor ({
-    pollingTimeout = 60000
+    pollingTimeout = 60000,
+    configDelay = 0
   }) {
     super({
       pollingTimeout
     })
 
+    this._configDelay = configDelay
     this._fetchDisabled = false
     this._fetchError = false
 
@@ -33,7 +36,9 @@ module.exports = class ConfigService extends BaseService {
   }
 
   _route (router) {
-    router.get('/configs/:appId/:cluster/:namespaceName', ctx => {
+    router.get('/configs/:appId/:cluster/:namespaceName', async ctx => {
+      await delay(this._configDelay)
+
       if (this._fetchError) {
         ctx.body = '{boooooooooooooom!}'
         return
@@ -85,35 +90,40 @@ module.exports = class ConfigService extends BaseService {
       }
     })
 
-    router.get('/configfiles/json/:appId/:cluster/:namespaceName', ctx => {
-      if (this._fetchError) {
-        ctx.body = '{boooooooooooooom!}'
-        return
+    router.get(
+      '/configfiles/json/:appId/:cluster/:namespaceName',
+      async ctx => {
+        await delay(this._configDelay)
+
+        if (this._fetchError) {
+          ctx.body = '{boooooooooooooom!}'
+          return
+        }
+
+        if (this._fetchDisabled) {
+          ctx.status = 404
+          return
+        }
+
+        const {
+          appId,
+          cluster,
+          namespaceName
+        } = ctx.params
+
+        const namespace = this._config
+        .app(appId)
+        .cluster(cluster)
+        .namespace(namespaceName)
+
+        if (!namespace.published()) {
+          ctx.status = 404
+          return
+        }
+
+        ctx.body = namespace.configurations
       }
-
-      if (this._fetchDisabled) {
-        ctx.status = 404
-        return
-      }
-
-      const {
-        appId,
-        cluster,
-        namespaceName
-      } = ctx.params
-
-      const namespace = this._config
-      .app(appId)
-      .cluster(cluster)
-      .namespace(namespaceName)
-
-      if (!namespace.published()) {
-        ctx.status = 404
-        return
-      }
-
-      ctx.body = namespace.configurations
-    })
+    )
 
     router.get('/notifications/v2', async ctx => {
       if (this._notificationError) {

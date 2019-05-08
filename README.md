@@ -42,6 +42,7 @@ require('http').createServer(
 
 - **options** `Object`
   - **pollingTimeout** `number=60000` If there is no update notifications in `options.pollingTimeout` milliseconds, then config service will tell the client with status `304`
+  - **configDelay** `number=0` The APIs to get the configuration will be delayed in `configDelay`. This option is to mimic the timeout scenarios.
 
 ### config.callback(): Function
 
